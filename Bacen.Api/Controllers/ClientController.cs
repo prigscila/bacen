@@ -1,3 +1,4 @@
+using AutoMapper;
 using Bacen.Api.Models.Requests;
 using Bacen.Domain.Entities;
 using Bacen.Domain.Services.Interfaces;
@@ -9,19 +10,23 @@ namespace Bacen.Api.Controllers;
 [Route("api/clients")]
 public class ClientController : ControllerBase
 {
-    private IClientService _clientService;
+    private readonly IClientService _clientService;
+    private readonly IMapper _mapper;
 
-    public ClientController(IClientService clientService)
+    public ClientController(IClientService clientService, IMapper mapper)
     {
         _clientService = clientService;
+        _mapper = mapper;
     }
 
     [HttpPost]
     public async Task<IActionResult> CreateClient(ClientRequest request)
     {
-        await _clientService.CreateClient(new Client() {
-            Account = new Account(re)
-        });
-        
+        var clientToCreate = _mapper.Map<Client>(request);
+        await _clientService.CreateClient(clientToCreate);
+
+        if (_clientService.HasErrors())
+            return BadRequest(_clientService.GetErrors());
+        return Ok();
     }
 }

@@ -1,4 +1,6 @@
-namespace Bacen.Api.Models.Requests;
+using Bacen.Domain.Entities;
+
+namespace Bacen.Domain.Entities;
 
 public class CreditCard : Card
 {
