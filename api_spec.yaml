@@ -1,0 +1,218 @@
+openapi: 3.0.1
+info:
+  title: Bacen.Api
+  version: '1.0'
+paths:
+  /api/clients:
+    post:
+      tags:
+        - Client
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClientRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ClientRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ClientRequest'
+      responses:
+        '200':
+          description: Success
+  /api/credit-transactions:
+    post:
+      tags:
+        - CreditTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreditTransactionRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/CreditTransactionRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/CreditTransactionRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /api/debit-transactions:
+    post:
+      tags:
+        - DebitTransaction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DebitTransactionRequest'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/DebitTransactionRequest'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/DebitTransactionRequest'
+      responses:
+        '200':
+          description: Success
+        '400':
+          description: Bad Request
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+        '404':
+          description: Not Found
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/ProblemDetails'
+  /{transactionId}/cancel:
+    put:
+      tags:
+        - Transaction
+      parameters:
+        - name: transactionId
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success
+components:
+  schemas:
+    AccountRequest:
+      type: object
+      properties:
+        initialBalance:
+          type: number
+          format: double
+      additionalProperties: false
+    CardType:
+      enum:
+        - 0
+        - 1
+      type: integer
+      format: int32
+    ClientRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        email:
+          type: string
+          nullable: true
+        address:
+          type: string
+          nullable: true
+        password:
+          type: string
+          nullable: true
+        account:
+          $ref: '#/components/schemas/AccountRequest'
+        cardType:
+          $ref: '#/components/schemas/CardType'
+      additionalProperties: false
+    CreditCardRequest:
+      type: object
+      properties:
+        number:
+          type: integer
+          format: int32
+        cvv:
+          type: integer
+          format: int32
+      additionalProperties: false
+    CreditTransactionRequest:
+      type: object
+      properties:
+        card:
+          $ref: '#/components/schemas/CreditCardRequest'
+        value:
+          type: number
+          format: double
+        installments:
+          type: integer
+          format: int32
+      additionalProperties: false
+    DebitCardRequest:
+      type: object
+      properties:
+        number:
+          type: integer
+          format: int32
+        password:
+          type: string
+          nullable: true
+      additionalProperties: false
+    DebitTransactionRequest:
+      type: object
+      properties:
+        card:
+          $ref: '#/components/schemas/DebitCardRequest'
+        value:
+          type: number
+          format: double
+      additionalProperties: false
+    ProblemDetails:
+      type: object
+      properties:
+        type:
+          type: string
+          nullable: true
+        title:
+          type: string
+          nullable: true
+        status:
+          type: integer
+          format: int32
+          nullable: true
+        detail:
+          type: string
+          nullable: true
+        instance:
+          type: string
+          nullable: true
+      additionalProperties: {}
