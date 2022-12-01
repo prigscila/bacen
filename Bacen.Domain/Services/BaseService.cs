@@ -9,9 +9,9 @@ public abstract class BaseService : IBaseService
         Errors = new();
     }
 
-    protected void AddError(string error) 
+    protected void AddErrors(params string[] errors) 
     {
-        Errors.Add(error);
+        Errors.AddRange(errors);
     }
 
     public bool HasErrors() => Errors.Any();

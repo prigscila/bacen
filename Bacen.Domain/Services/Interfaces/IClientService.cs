@@ -4,5 +4,7 @@ namespace Bacen.Domain.Services.Interfaces;
 
 public interface IClientService : IBaseService
 {
-    Task CreateClient(Client client);
+    Task<string> CreateClient(Client client);
+    Task<List<Client>> GetAllClients();
+    Task<Client?> GetClientById(string id);
 }

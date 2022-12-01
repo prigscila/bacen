@@ -23,10 +23,10 @@ public class ClientController : ControllerBase
     public async Task<IActionResult> CreateClient(ClientRequest request)
     {
         var clientToCreate = _mapper.Map<Client>(request);
-        await _clientService.CreateClient(clientToCreate);
+        var clientId = await _clientService.CreateClient(clientToCreate);
 
         if (_clientService.HasErrors())
             return BadRequest(_clientService.GetErrors());
-        return Ok();
+        return Ok(new { clientId });
     }
 }
