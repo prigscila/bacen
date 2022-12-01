@@ -6,7 +6,7 @@ namespace Bacen.Api.Controllers;
 [Route("api/transactions")]
 public class TransactionController : ControllerBase
 {
-    [HttpPut("/{transactionId}")]
+    [HttpPut("/{transactionId}/cancel")]
     public async Task<IActionResult> CancelTransaction(Guid transactionId)
     {
         return Ok();

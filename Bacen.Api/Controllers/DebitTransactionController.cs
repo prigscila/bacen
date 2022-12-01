@@ -1,3 +1,4 @@
+using Bacen.Api.Models.Requests;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bacen.Api.Controllers;
@@ -6,9 +7,13 @@ namespace Bacen.Api.Controllers;
 [Route("api/debit-transactions")]
 public class DebitTransactionController : ControllerBase
 {
-    // [HttpPost]
-    // public async Task<IActionResult> AddDebitTransaction(DebitRequest request)
-    // {
+    [HttpPost]
+    [ProducesResponseType(200)]
+    [ProducesResponseType(400)]
+    [ProducesResponseType(404)]
+    public async Task<IActionResult> AddDebitTransaction(DebitTransactionRequest request)
+    {
         
-    // }
+        return Ok();
+    }
 }
