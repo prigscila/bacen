@@ -1,4 +1,5 @@
 using Bacen.Api.Models.Requests;
+using Bacen.Api.Models.Requests.Transactions;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bacen.Api.Controllers;

@@ -1,4 +1,4 @@
-using Bacen.Domain.Dtos.Clients;
+using Bacen.Domain.Dtos.Transactions;
 using Bacen.Domain.Entities;
 using Bacen.Domain.Services.Interfaces;
 using FluentValidation;
@@ -7,12 +7,12 @@ using MongoDB.Driver;
 
 namespace Bacen.Domain.Services;
 
-public class ClientService : BaseService, IClientService
+public class TransactionService : BaseService, ITransactionService
 {
-    private readonly IValidator<Client> _validator;
+    private readonly IValidator<Transaction> _validator;
     private readonly IMongoCollection<Client> _clientsCollection;
-
-    public ClientService(IOptions<BacenDatabaseSettings> bacenDatabaseSettings, IValidator<Client> validator)
+    
+    public TransactionService(IOptions<BacenDatabaseSettings> bacenDatabaseSettings, IValidator<Transaction> validator)
     {
         var mongoClient = new MongoClient(bacenDatabaseSettings.Value.ConnectionString);
         var mongoDatabase = mongoClient.GetDatabase(bacenDatabaseSettings.Value.DatabaseName);
@@ -20,25 +20,18 @@ public class ClientService : BaseService, IClientService
         _validator = validator;
     }
 
-    public async Task<string> CreateClient(ClientDto clientToCreate)
+
+    public async Task<string> CreateCreditTransaction(CreditTransactionDto transactionToCreate)
     {
-        var client = await GetClientByName(clientToCreate.Name);
-        if (client == null)
+        var client = await _clientsCollection.Find(x => 
+            x.CreditCard.Number == transactionToCreate.CreditCard.Number
+            && x.CreditCard.CVV == transactionToCreate.CreditCard.CVV
+        ).FirstOrDefaultAsync();
+
+        if (client != null) 
         {
-            client = Client.Of(clientToCreate);
-
-            var validation = _validator.Validate(client);
-            if (!validation.IsValid) 
-            {
-                AddErrors(validation.Errors.Select(x => x.ErrorMessage).ToArray());
-                return string.Empty;
-            }
-
-            await _clientsCollection.InsertOneAsync(client);
-            client = await GetClientByName(clientToCreate.Name);            
+            
         }
-
-        return client.Id;
     }
 
     private async Task<Client> GetClientByName(string name) =>
@@ -49,4 +42,9 @@ public class ClientService : BaseService, IClientService
 
     public async Task<Client?> GetClientById(string id) =>
         await _clientsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+    public Task<string> CreateDebitTransaction(DebitTransactionDto transactionToCreate)
+    {
+        throw new NotImplementedException();
+    }
 }

@@ -1,4 +1,6 @@
-namespace Bacen.Api.Models.Requests;
+using Bacen.Api.Models.Requests.Cards;
+
+namespace Bacen.Api.Models.Requests.Transactions;
 
 public class DebitTransactionRequest
 {

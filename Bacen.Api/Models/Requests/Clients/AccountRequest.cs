@@ -1,4 +1,4 @@
-namespace Bacen.Api.Models.Requests;
+namespace Bacen.Api.Models.Requests.Clients;
 
 public class AccountRequest
 {

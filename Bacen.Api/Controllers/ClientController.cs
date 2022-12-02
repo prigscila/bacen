@@ -1,7 +1,6 @@
 using AutoMapper;
-using Bacen.Api.Models.Requests;
-using Bacen.Domain.Dtos;
-using Bacen.Domain.Entities;
+using Bacen.Api.Models.Requests.Clients;
+using Bacen.Domain.Dtos.Clients;
 using Bacen.Domain.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 

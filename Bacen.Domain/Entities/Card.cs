@@ -4,9 +4,9 @@ namespace Bacen.Domain.Entities;
 
 public abstract class Card
 {
-    public string Number { get; set; }
-    public string Name { get; set; }
-    public DateTime ExpirationDate { get; set; }
+    public string Number { get; private set; }
+    public string Name { get; private set; }
+    public DateTime ExpirationDate { get; private set; }
 
     protected Card(string name)
     {   

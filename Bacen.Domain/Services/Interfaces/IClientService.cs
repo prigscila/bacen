@@ -1,4 +1,4 @@
-using Bacen.Domain.Dtos;
+using Bacen.Domain.Dtos.Clients;
 using Bacen.Domain.Entities;
 
 namespace Bacen.Domain.Services.Interfaces;

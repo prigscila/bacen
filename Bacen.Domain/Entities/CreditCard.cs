@@ -3,10 +3,12 @@ namespace Bacen.Domain.Entities;
 public class CreditCard : Card
 {
     public string CVV { get; private set; }
+    public double Limit { get; private set; }
 
-    public CreditCard(string name) : base(name)
+    public CreditCard(string name, double limit) : base(name)
     {
         CVV = GenerateCvv();
+        Limit = limit;
     }
 
     private string GenerateCvv()

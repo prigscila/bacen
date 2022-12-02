@@ -1,6 +1,7 @@
+using Bacen.Domain.Dtos.Clients;
 using Bacen.Domain.Enums;
 
-namespace Bacen.Domain.Dtos;
+namespace Bacen.Domain.Dtos.Clients;
 
 public class ClientDto
 {
