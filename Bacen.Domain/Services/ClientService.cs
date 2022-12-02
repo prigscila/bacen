@@ -12,11 +12,9 @@ public class ClientService : BaseService, IClientService
     private readonly IValidator<Client> _validator;
     private readonly IMongoCollection<Client> _clientsCollection;
 
-    public ClientService(IOptions<BacenDatabaseSettings> bacenDatabaseSettings, IValidator<Client> validator)
+    public ClientService(IOptions<BacenDatabaseSettings> bacenDatabaseSettings, IUnitOfWork unitOfWork, IValidator<Client> validator)
     {
-        var mongoClient = new MongoClient(bacenDatabaseSettings.Value.ConnectionString);
-        var mongoDatabase = mongoClient.GetDatabase(bacenDatabaseSettings.Value.DatabaseName);
-        _clientsCollection = mongoDatabase.GetCollection<Client>(bacenDatabaseSettings.Value.ClientsCollectionName);
+        _clientsCollection = unitOfWork.GetCollection<Client>(bacenDatabaseSettings.Value.ClientsCollectionName);
         _validator = validator;
     }
 
