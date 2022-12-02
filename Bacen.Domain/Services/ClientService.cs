@@ -1,3 +1,4 @@
+using Bacen.Domain.Dtos;
 using Bacen.Domain.Entities;
 using Bacen.Domain.Services.Interfaces;
 using FluentValidation;
@@ -19,19 +20,21 @@ public class ClientService : BaseService, IClientService
         _validator = validator;
     }
 
-    public async Task<string> CreateClient(Client clientToCreate)
+    public async Task<string> CreateClient(ClientDto clientToCreate)
     {
         var client = await GetClientByName(clientToCreate.Name);
         if (client == null)
         {
-            var validation = _validator.Validate(clientToCreate);
+            client = Client.Of(clientToCreate);
+
+            var validation = _validator.Validate(client);
             if (!validation.IsValid) 
             {
                 AddErrors(validation.Errors.Select(x => x.ErrorMessage).ToArray());
                 return string.Empty;
             }
 
-            await _clientsCollection.InsertOneAsync(clientToCreate);
+            await _clientsCollection.InsertOneAsync(client);
             client = await GetClientByName(clientToCreate.Name);            
         }
 

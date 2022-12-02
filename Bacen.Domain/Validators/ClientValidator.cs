@@ -25,35 +25,31 @@ public class ClientValidator : AbstractValidator<Client>
 
     private void SetCreditCardRules()
     {
-        RuleFor(x => x.CreditCard)
-            .Cascade(CascadeMode.Stop)
-            .NotNull()
-            .DependentRules(() => {
-                RuleFor(x => x.DebitCard)
-                    .Null()
-                    .WithMessage("Cliente deveria ter ou cartão de crédito ou cartão de débito, não ambos.");
+        When(x => x.DebitCard == null, () => 
+        {
+            RuleFor(x => x.CreditCard)
+                .Cascade(CascadeMode.Stop)
+                .NotNull()
+                .WithMessage("Cliente deveria ter ou cartão de crédito ou cartão de débito, não ambos.");
 
-                RuleFor(x => x.CreditCard.Name).NotNull();
-                RuleFor(x => x.CreditCard.ExpirationDate).NotNull();
-                RuleFor(x => x.CreditCard.CVV).NotNull();
-            });
+            RuleFor(x => x.CreditCard.Name).NotNull();
+            RuleFor(x => x.CreditCard.ExpirationDate).NotNull();
+            RuleFor(x => x.CreditCard.CVV).NotNull();            
+        });
     }
 
     private void SetDebitCardRules()
     {
-        RuleFor(x => x.DebitCard)
-            .Cascade(CascadeMode.Stop)
-            .NotNull()
-            .DependentRules(() => {
-                RuleFor(x => x.CreditCard)
-                    .Null()
-                    .WithMessage("Cliente deveria ter ou cartão de crédito ou cartão de débito, não ambos.");
+        When(x => x.CreditCard == null, () => 
+        {
+            RuleFor(x => x.DebitCard)
+                .Cascade(CascadeMode.Stop)
+                .NotNull()
+                .WithMessage("Cliente deveria ter ou cartão de crédito ou cartão de débito, não ambos.");
 
-                RuleFor(x => x.DebitCard.Name).NotNull();
-                RuleFor(x => x.DebitCard.ExpirationDate).NotNull();
-                RuleFor(x => x.DebitCard.Password)
-                    .NotNull()
-                    .Length(4, 4);
-            });
+            RuleFor(x => x.DebitCard.Name).NotNull();
+            RuleFor(x => x.DebitCard.ExpirationDate).NotNull();
+            RuleFor(x => x.DebitCard.Password).NotNull();            
+        });
     }
 }

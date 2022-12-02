@@ -1,5 +1,6 @@
 using AutoMapper;
 using Bacen.Api.Models.Requests;
+using Bacen.Domain.Dtos;
 using Bacen.Domain.Entities;
 using Bacen.Domain.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
@@ -22,7 +23,7 @@ public class ClientController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> CreateClient(ClientRequest request)
     {
-        var clientToCreate = _mapper.Map<Client>(request);
+        var clientToCreate = _mapper.Map<ClientDto>(request);
         var clientId = await _clientService.CreateClient(clientToCreate);
 
         if (_clientService.HasErrors())
