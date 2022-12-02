@@ -2,6 +2,7 @@ using Bacen.Domain;
 using Bacen.Domain.Entities;
 using Bacen.Domain.Services;
 using Bacen.Domain.Services.Interfaces;
+using Bacen.Domain.Utils;
 using Bacen.Domain.Validators;
 using FluentValidation;
 
@@ -13,6 +14,9 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddAutoMapper(typeof(Program).Assembly);
 builder.Services.AddScoped<IClientService, ClientService>();
 builder.Services.AddScoped<IValidator<Client>, ClientValidator>();
+builder.Services.AddScoped<IValidator<Account>, AccountValidator>();
+builder.Services.AddScoped<ITransactionService, TransactionService>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.Configure<BacenDatabaseSettings>(
     builder.Configuration.GetSection("BacenDatabase")
 );
