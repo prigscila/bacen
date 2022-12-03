@@ -20,7 +20,7 @@ public class TransactionController : ControllerBase
         var transactionId = await _transactionService.CancelTransaction(transactionToCancelId);
         
         if (_transactionService.HasErrors())
-            return BadRequest(_transactionService.GetErrors());
-        return Ok(new { transactionId });
+            return Unauthorized(_transactionService.GetErrors());
+        return Created(string.Empty, new { transactionId });
     }
 }
