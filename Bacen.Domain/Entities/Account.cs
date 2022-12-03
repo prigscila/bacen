@@ -32,4 +32,9 @@ public class Account
     {
         Balance -= value;
     }
+
+    public void IncreaseBalance(double value)
+    {
+        Balance += value;
+    }
 }

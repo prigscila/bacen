@@ -39,17 +39,17 @@ public class ClientService : BaseService, IClientService
         return client.CorrelationId;
     }
 
-    private async Task<Client> GetClientByName(string name) =>
-        await _clientsCollection.Find(x => x.Name == name).FirstOrDefaultAsync();
+    public async Task IncreaseBalance(Client client, Transaction transaction)
+    {
+        if (client.Account.DebitCard == null)
+            return;
 
-    public async Task<List<Client>> GetAllClients() =>
-        await _clientsCollection.Find(_ => true).ToListAsync();
-
-    public async Task<Client?> GetClientById(string id) =>
-        await _clientsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-
-    public async Task<Client?> GetClientByCorrelationId(Guid correlationId) =>
-        await _clientsCollection.Find(x => x.CorrelationId == correlationId).FirstOrDefaultAsync();
+        client.Account.IncreaseBalance(transaction.Value);
+        await _clientsCollection.UpdateOneAsync(
+            Builders<Client>.Filter.Eq(p => p.Id, client.Id),
+            Builders<Client>.Update.Set(p => p.Account, client.Account)            
+        );
+    }
 
     public async Task DeduceFromBalance(Client client, Transaction transaction)
     {
@@ -59,4 +59,13 @@ public class ClientService : BaseService, IClientService
             Builders<Client>.Update.Set(p => p.Account, client.Account)            
         );
     }
+
+    private async Task<Client> GetClientByName(string name) =>
+        await _clientsCollection.Find(x => x.Name == name).FirstOrDefaultAsync();
+
+    public async Task<List<Client>> GetAllClients() =>
+        await _clientsCollection.Find(_ => true).ToListAsync();
+    
+    public async Task<Client> GetClientById(string clientId) =>
+        await _clientsCollection.Find(x => x.Id == clientId).FirstOrDefaultAsync();
 }

@@ -34,7 +34,7 @@ public class TransactionService : BaseService, ITransactionService
             return null;
         }
 
-        var transaction = new Transaction(transactionToCreate.Installments, transactionToCreate.Value, client);
+        var transaction = new Transaction(transactionToCreate.Installments, transactionToCreate.Value, client.Id);
         await _transactionsCollection.InsertOneAsync(transaction);
 
         return transaction.CorrelationId;
@@ -79,7 +79,7 @@ public class TransactionService : BaseService, ITransactionService
             return null;
         }
 
-        var transaction = new Transaction(1, transactionToCreate.Value, client);
+        var transaction = new Transaction(1, transactionToCreate.Value, client.Id);
         await _transactionsCollection.InsertOneAsync(transaction);
         await _clientService.DeduceFromBalance(client, transaction);
 
@@ -101,12 +101,35 @@ public class TransactionService : BaseService, ITransactionService
     private async Task<bool> IsAccountBalanceEnough(Client client, double value) =>
         client.Account.Balance < value;
 
-    public async Task<Transaction?> GetTransactionById(string id) =>
-        await _transactionsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
-
-    public async Task<Transaction?> GetTransactionByCorrelationId(Guid correlationId) =>
-        await _transactionsCollection.Find(x => x.CorrelationId == correlationId).FirstOrDefaultAsync();
-
     public async Task<List<Transaction>> GetAllTransactions() =>
-        await _transactionsCollection.Find(_ => true).ToListAsync();
+        await _transactionsCollection.Find(x => 
+            x.Status == TransactionStatus.Approved
+            && x.RollbackOfTransactionId == null
+        ).ToListAsync();
+
+    public async Task<Guid?> CancelTransaction(Guid transactionId)
+    {
+        var transaction = await _transactionsCollection.Find(x => x.CorrelationId == transactionId).FirstOrDefaultAsync();
+        if (transaction.Status == TransactionStatus.Canceled)
+            return null;            
+        
+        var client = await _clientService.GetClientById(transaction.ClientId);
+
+        var reverseTransaction = Transaction.ReverseOf(transaction);
+        await CancelTransaction(transaction);
+
+        await _transactionsCollection.InsertOneAsync(reverseTransaction);
+        await _clientService.IncreaseBalance(client, transaction);
+
+        return reverseTransaction.CorrelationId;
+    }
+
+    private async Task CancelTransaction(Transaction transaction)
+    {
+        transaction.Cancel();
+        await _transactionsCollection.UpdateOneAsync(
+            Builders<Transaction>.Filter.Eq(t => t.Id, transaction.Id),
+            Builders<Transaction>.Update.Set(t => t.Status, transaction.Status)
+        );
+    }
 }

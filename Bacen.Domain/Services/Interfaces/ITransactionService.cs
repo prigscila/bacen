@@ -7,7 +7,6 @@ public interface ITransactionService : IBaseService
 {
     Task<Guid?> CreateCreditTransaction(CreditTransactionDto transactionToCreate);
     Task<Guid?> CreateDebitTransaction(DebitTransactionDto transactionToCreate);
+    Task<Guid?> CancelTransaction(Guid transactionId);
     Task<List<Transaction>> GetAllTransactions();
-    Task<Transaction?> GetTransactionById(string id);
-    Task<Transaction?> GetTransactionByCorrelationId(Guid correlationId);
 }

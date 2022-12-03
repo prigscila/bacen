@@ -5,13 +5,16 @@ public class Transaction : Entity
     public IList<Installment> Installments { get; private set; }
     public double Value { get; private set; }
     public DateTime Date { get; private set; }
+    public TransactionStatus Status { get; set; }
+    public string RollbackOfTransactionId { get; set; }
     public string ClientId { get; set; }
 
-    public Transaction(int installments, double value, Client client)
+    public Transaction(int installments, double value, string clientId)
     {   
         Date = DateTime.Now;
         Value = value;
-        ClientId = client.Id;
+        ClientId = clientId;
+        Status = TransactionStatus.Approved;
         GenerateInstallments(installments);        
     }
 
@@ -34,4 +37,15 @@ public class Transaction : Entity
             Installments.Add(new Installment(Value - installmentsTotal, DateTime.Today.AddMonths(installments)));
         }
     }
+
+    public void Cancel()
+    {
+        Status = TransactionStatus.Canceled;
+    }
+
+    public static Transaction ReverseOf(Transaction transaction) => 
+        new Transaction(transaction.Installments.Count, transaction.Value, transaction.ClientId)
+        {
+            RollbackOfTransactionId = transaction.Id
+        };
 }

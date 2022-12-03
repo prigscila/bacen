@@ -1,3 +1,4 @@
+using Bacen.Domain.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Bacen.Api.Controllers;
@@ -6,9 +7,20 @@ namespace Bacen.Api.Controllers;
 [Route("api/transactions")]
 public class TransactionController : ControllerBase
 {
-    [HttpPut("/{transactionId}/cancel")]
-    public async Task<IActionResult> CancelTransaction(Guid transactionId)
+    private readonly ITransactionService _transactionService;
+
+    public TransactionController(ITransactionService transactionService)
     {
-        return Ok();
+        _transactionService = transactionService;
+    }
+
+    [HttpPut("/{transactionToCancelId}/cancel")]
+    public async Task<IActionResult> CancelTransaction(Guid transactionToCancelId)
+    {
+        var transactionId = await _transactionService.CancelTransaction(transactionToCancelId);
+        
+        if (_transactionService.HasErrors())
+            return BadRequest(_transactionService.GetErrors());
+        return Ok(new { transactionId });
     }
 }
