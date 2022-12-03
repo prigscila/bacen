@@ -45,7 +45,7 @@ public class TransactionService : BaseService, ITransactionService
         var clients = await _clientService.GetAllClients();
         return clients
             .Where(x =>
-                x.Account.DebitCard != null
+                x.Account.CreditCard != null
                 && x.Account.CreditCard.Number == transactionToCreate.Card.Number
                 && x.Account.CreditCard.CVV == transactionToCreate.Card.CVV
             )
