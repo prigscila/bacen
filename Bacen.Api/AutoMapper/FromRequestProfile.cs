@@ -18,5 +18,8 @@ public class FromRequestProfile : Profile
 
         CreateMap<CreditCardRequest, CreditCardDto>();
         CreateMap<CreditTransactionRequest, CreditTransactionDto>();
+
+        CreateMap<DebitCardRequest, DebitCardDto>();
+        CreateMap<DebitTransactionRequest, DebitTransactionDto>();
     }
 }

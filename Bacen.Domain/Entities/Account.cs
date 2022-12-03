@@ -27,4 +27,9 @@ public class Account
         
         DebitCard = new DebitCard(clientName);
     }
+
+    public void DeduceFromBalance(double value)
+    {
+        Balance -= value;
+    }
 }

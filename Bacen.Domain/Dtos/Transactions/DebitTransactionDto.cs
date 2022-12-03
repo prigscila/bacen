@@ -6,5 +6,5 @@ public class DebitTransactionDto
 {
     public int Installments { get; set; }
     public double Value { get; set; }
-    public DebitCardDto DebitCard { get; set; }
+    public DebitCardDto Card { get; set; }
 }

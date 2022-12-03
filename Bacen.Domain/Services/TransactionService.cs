@@ -39,6 +39,18 @@ public class TransactionService : BaseService, ITransactionService
 
         return transaction.CorrelationId;
     }
+    
+    private async Task<Client> GetClientByCreditCard(CreditTransactionDto transactionToCreate)
+    {
+        var clients = await _clientService.GetAllClients();
+        return clients
+            .Where(x =>
+                x.Account.DebitCard != null
+                && x.Account.CreditCard.Number == transactionToCreate.Card.Number
+                && x.Account.CreditCard.CVV == transactionToCreate.Card.CVV
+            )
+            .FirstOrDefault();
+    }
 
     private async Task<bool> IsLimitAvailableForTransaction(Client client, CreditTransactionDto transactionToCreate)
     {
@@ -52,20 +64,42 @@ public class TransactionService : BaseService, ITransactionService
         return client.Account.CreditCard.Limit < usedLimit;
     }
 
-    private async Task<Client> GetClientByCreditCard(CreditTransactionDto transactionToCreate)
+    public async Task<Guid?> CreateDebitTransaction(DebitTransactionDto transactionToCreate)
     {
-        return (await _clientService.GetAllClients())
+        var client = await GetClientByDebitCard(transactionToCreate);
+        if (client == null)
+        {
+            AddErrors("Cartão inválido");
+            return null;
+        }
+        
+        if (await IsAccountBalanceEnough(client, transactionToCreate.Value)) 
+        {
+            AddErrors("Não autorizado");
+            return null;
+        }
+
+        var transaction = new Transaction(1, transactionToCreate.Value, client);
+        await _transactionsCollection.InsertOneAsync(transaction);
+        await _clientService.DeduceFromBalance(client, transaction);
+
+        return transaction.CorrelationId;
+    }
+
+    private async Task<Client> GetClientByDebitCard(DebitTransactionDto transactionToCreate)
+    {
+        var clients = await _clientService.GetAllClients();
+        return clients
             .Where(x =>
-                x.Account.CreditCard.Number == transactionToCreate.Card.Number
-                && x.Account.CreditCard.CVV == transactionToCreate.Card.CVV
+                x.Account.DebitCard != null
+                && x.Account.DebitCard.Number == transactionToCreate.Card.Number
+                && x.Account.DebitCard.Password == transactionToCreate.Card.Password
             )
             .FirstOrDefault();
     }
 
-    public Task<Guid?> CreateDebitTransaction(DebitTransactionDto transactionToCreate)
-    {
-        throw new NotImplementedException();
-    }
+    private async Task<bool> IsAccountBalanceEnough(Client client, double value) =>
+        client.Account.Balance < value;
 
     public async Task<Transaction?> GetTransactionById(string id) =>
         await _transactionsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();

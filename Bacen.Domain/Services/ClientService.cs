@@ -50,4 +50,13 @@ public class ClientService : BaseService, IClientService
 
     public async Task<Client?> GetClientByCorrelationId(Guid correlationId) =>
         await _clientsCollection.Find(x => x.CorrelationId == correlationId).FirstOrDefaultAsync();
+
+    public async Task DeduceFromBalance(Client client, Transaction transaction)
+    {
+        client.Account.DeduceFromBalance(transaction.Value);
+        await _clientsCollection.UpdateOneAsync(
+            Builders<Client>.Filter.Eq(p => p.Id, client.Id),
+            Builders<Client>.Update.Set(p => p.Account, client.Account)            
+        );
+    }
 }

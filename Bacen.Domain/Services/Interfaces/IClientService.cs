@@ -9,4 +9,5 @@ public interface IClientService : IBaseService
     Task<List<Client>> GetAllClients();
     Task<Client?> GetClientById(string id);
     Task<Client?> GetClientByCorrelationId(Guid correlationId);
+    Task DeduceFromBalance(Client client, Transaction transaction);
 }
