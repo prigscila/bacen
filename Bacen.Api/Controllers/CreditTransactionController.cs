@@ -22,7 +22,6 @@ public class CreditTransactionController : ControllerBase
     [HttpPost]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
     public async Task<IActionResult> CreateCreditTransaction(CreditTransactionRequest request)
     {
         var transactionToCreate = _mapper.Map<CreditTransactionDto>(request);

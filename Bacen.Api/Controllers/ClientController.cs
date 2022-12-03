@@ -22,7 +22,6 @@ public class ClientController : ControllerBase
     [HttpPost]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
     public async Task<IActionResult> CreateClient(ClientRequest request)
     {
         var clientToCreate = _mapper.Map<ClientDto>(request);

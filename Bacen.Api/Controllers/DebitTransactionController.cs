@@ -22,7 +22,6 @@ public class DebitTransactionController : ControllerBase
     [HttpPost]
     [ProducesResponseType(200)]
     [ProducesResponseType(400)]
-    [ProducesResponseType(404)]
     public async Task<IActionResult> AddDebitTransaction(DebitTransactionRequest request)
     {
         var transactionToCreate = _mapper.Map<DebitTransactionDto>(request);
