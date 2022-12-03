@@ -15,6 +15,9 @@ public class TransactionController : ControllerBase
     }
 
     [HttpPut("/{transactionToCancelId}/cancel")]
+    [ProducesResponseType(201)]
+    [ProducesResponseType(401)]
+    [ProducesResponseType(404)]
     public async Task<IActionResult> CancelTransaction(Guid transactionToCancelId)
     {
         var transactionId = await _transactionService.CancelTransaction(transactionToCancelId);
