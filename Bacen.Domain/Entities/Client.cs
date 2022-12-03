@@ -16,5 +16,5 @@ public class Client : Entity
             Email = clientToCreate.Email,
             Address = clientToCreate.Address,
             Account = new Account(clientToCreate.Name, clientToCreate.Account)
-        };           
+        };
 }

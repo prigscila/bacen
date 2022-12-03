@@ -7,5 +7,11 @@ public abstract class Entity
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string? Id { get; private set; }    
+    public string? Id { get; private set; }
+    public Guid CorrelationId { get; set; }
+
+    public Entity()
+    {
+        CorrelationId = Guid.NewGuid();
+    }
 }

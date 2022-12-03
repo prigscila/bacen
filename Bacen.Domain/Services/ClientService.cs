@@ -1,6 +1,7 @@
 using Bacen.Domain.Dtos.Clients;
 using Bacen.Domain.Entities;
 using Bacen.Domain.Services.Interfaces;
+using Bacen.Domain.Utils;
 using FluentValidation;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
@@ -18,7 +19,7 @@ public class ClientService : BaseService, IClientService
         _validator = validator;
     }
 
-    public async Task<string> CreateClient(ClientDto clientToCreate)
+    public async Task<Guid?> CreateClient(ClientDto clientToCreate)
     {
         var client = await GetClientByName(clientToCreate.Name);
         if (client == null)
@@ -29,14 +30,13 @@ public class ClientService : BaseService, IClientService
             if (!validation.IsValid) 
             {
                 AddErrors(validation.Errors.Select(x => x.ErrorMessage).ToArray());
-                return string.Empty;
+                return null;
             }
 
             await _clientsCollection.InsertOneAsync(client);
-            client = await GetClientByName(clientToCreate.Name);            
         }
 
-        return client.Id;
+        return client.CorrelationId;
     }
 
     private async Task<Client> GetClientByName(string name) =>
@@ -47,4 +47,7 @@ public class ClientService : BaseService, IClientService
 
     public async Task<Client?> GetClientById(string id) =>
         await _clientsCollection.Find(x => x.Id == id).FirstOrDefaultAsync();
+
+    public async Task<Client?> GetClientByCorrelationId(Guid correlationId) =>
+        await _clientsCollection.Find(x => x.CorrelationId == correlationId).FirstOrDefaultAsync();
 }

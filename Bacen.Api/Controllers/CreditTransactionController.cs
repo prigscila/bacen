@@ -26,7 +26,7 @@ public class CreditTransactionController : ControllerBase
     public async Task<IActionResult> CreateCreditTransaction(CreditTransactionRequest request)
     {
         var transactionToCreate = _mapper.Map<CreditTransactionDto>(request);
-        var transactionId = _transactionService.CreateCreditTransaction(transactionToCreate);
+        var transactionId = await _transactionService.CreateCreditTransaction(transactionToCreate);
 
         if (_transactionService.HasErrors())
             return BadRequest(_transactionService.GetErrors());

@@ -5,11 +5,13 @@ public class Transaction : Entity
     public IList<Installment> Installments { get; private set; }
     public double Value { get; private set; }
     public DateTime Date { get; private set; }
+    public string ClientId { get; set; }
 
-    public Transaction(int installments, double value)
+    public Transaction(int installments, double value, Client client)
     {   
         Date = DateTime.Now;
         Value = value;
+        ClientId = client.Id;
         GenerateInstallments(installments);        
     }
 
