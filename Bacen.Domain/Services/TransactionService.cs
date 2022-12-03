@@ -110,8 +110,11 @@ public class TransactionService : BaseService, ITransactionService
     public async Task<Guid?> CancelTransaction(Guid transactionId)
     {
         var transaction = await _transactionsCollection.Find(x => x.CorrelationId == transactionId).FirstOrDefaultAsync();
-        if (transaction.Status == TransactionStatus.Canceled)
+        if (transaction.Status == TransactionStatus.Canceled || transaction.RollbackOfTransactionId != null)
+        {
+            AddErrors("Transação já está cancelada");
             return null;            
+        }
         
         var client = await _clientService.GetClientById(transaction.ClientId);
 
