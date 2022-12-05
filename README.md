@@ -1,4 +1,4 @@
-# bacen
+# Bacen API
 
 1. Run `docker-compose up`
 1. Access API through Swagger Doc by accessing `http://localhost:5000/swagger/index.html`
