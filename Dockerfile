@@ -1,15 +1,10 @@
-FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build-env
-WORKDIR /App
-
-# Copy everything
-COPY . ./
-# Restore as distinct layers
+FROM mcr.microsoft.com/dotnet/sdk:7.0 as build
+WORKDIR /app
+COPY . .
 RUN dotnet restore
-# Build and publish a release
-RUN dotnet publish -c Release -o out
+RUN dotnet publish -o /app/published-app
 
-# Build runtime image
-FROM mcr.microsoft.com/dotnet/aspnet:7.0
-WORKDIR /App
-COPY --from=build-env /App/out .
-ENTRYPOINT ["dotnet", "Bacen.Api.dll"]
+FROM mcr.microsoft.com/dotnet/aspnet:7.0 as runtime
+WORKDIR /app
+COPY --from=build /app/published-app /app
+ENTRYPOINT [ "dotnet", "/app/Bacen.Api.dll" ]
